@@ -1,4 +1,3 @@
 db_volume
 *.pyc
 __pycache__
-.idea

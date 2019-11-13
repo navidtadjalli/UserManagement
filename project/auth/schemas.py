@@ -16,3 +16,8 @@ class UserSchema(Schema):
     )
     registration_date = fields.DateTime(dump_only=True)
     # blogs = fields.Nested(BlogSchema, many=True)
+
+
+class UserLoginSchema(Schema):
+    username = fields.Str(required=True)
+    password = fields.Str(required=True)

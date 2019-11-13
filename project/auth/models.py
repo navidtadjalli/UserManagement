@@ -14,7 +14,6 @@ class User(db.Model, ModelActionMixin):
     last_name = db.Column(db.String(80))
     phone_number = db.Column(db.String(14))
     registration_date = db.Column(db.String(40), default=datetime.datetime.utcnow())
-    # blogs = db.relationship('Blog', backref='users', lazy=True)
 
     def __init__(self, data):
         self.username = data.get('username')
@@ -25,3 +24,6 @@ class User(db.Model, ModelActionMixin):
 
     def __repr__(self):
         return str(self.username)
+
+    def check_password(self, password):
+        return PasswordHasher.verify(self.password, password)
