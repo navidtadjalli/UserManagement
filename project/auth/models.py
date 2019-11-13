@@ -13,6 +13,7 @@ class User(db.Model, ModelActionMixin):
     first_name = db.Column(db.String(40))
     last_name = db.Column(db.String(80))
     phone_number = db.Column(db.String(14))
+    is_admin = db.Column(db.Boolean)
     registration_date = db.Column(db.String(40), default=datetime.datetime.utcnow())
 
     def __init__(self, data):
