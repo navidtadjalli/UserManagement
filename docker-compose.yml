@@ -1,0 +1,37 @@
+version: "3"
+
+networks:
+  apptire:
+    driver: "bridge"
+
+services:
+  db:
+    image: postgres:12
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - apptire
+    volumes:
+      - ./db_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: 'umg'
+      POSTGRES_USER: 'root'
+      POSTGRES_PASSWORD: 'Um8TdymYzeutdtRT'
+
+  project:
+    build: ./project
+    image: project
+    command: 'bash -c "sleep 360m"'
+    ports:
+      - "5000:8000"
+    volumes:
+      - ./project:/project
+    depends_on:
+      - db
+    environment:
+      FLASK_ENV: 'development'
+      DATABASE_URL: 'postgres://root:Um8TdymYzeutdtRT@db:5432/umg'
+      JWT_SECRET_KEY: 'Q\xf0nM~\xba\xa1\xc8\xd04\x1b\xd6\x1e\xa0,\x91'
+    networks:
+      - apptire
