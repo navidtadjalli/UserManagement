@@ -97,3 +97,14 @@ def user_update(pk):
     return generate_response(status.HTTP_200_OK, {
         'data': user_schema.dump(user)
     })
+
+
+@user_views.route('/<int:pk>', methods=['DELETE'])
+def user_delete(pk):
+    user = User.check_user_exists(pk)
+
+    user.delete()
+
+    return generate_response(status.HTTP_200_OK, {
+        'success': True
+    })
