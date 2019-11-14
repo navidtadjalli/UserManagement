@@ -15,3 +15,4 @@ class UserModelTest(unittest.TestCase):
         assert 'phone_number' in columns
         assert 'is_admin' in columns
         assert 'registration_date' in columns
+        assert 'last_login_date' in columns

@@ -8,8 +8,17 @@ from project.umg.app import create_app
 
 class BaseTest(unittest.TestCase):
     def setUp(self):
-        app = create_app('development')
-        self.client = app.test_client()
+        self.app = create_app('development')
+        self.client = self.app.test_client()
+
+        admin = User({
+            'username': 'admin',
+            'password': '123qwe!@#',
+            'first_name': 'Admin',
+            'last_name': 'Adminian',
+            'phone_number': '09353942996',
+            'is_admin': True
+        })
 
         user = User({
             'username': 'navid',
@@ -19,9 +28,10 @@ class BaseTest(unittest.TestCase):
             'phone_number': '09353942996'
         })
 
-        with app.app_context():
+        with self.app.app_context():
             db.drop_all()
             db.create_all()
+            admin.save()
             user.save()
 
     def send_request(self, method_type, endpoint, **kwargs):
@@ -40,10 +50,13 @@ class BaseTest(unittest.TestCase):
         if method_type == 'DELETE':
             client_method_func = self.client.delete
 
+        headers = kwargs.pop('headers', None)
+
         response = client_method_func(
             endpoint,
             content_type='application/json',
-            data=json.dumps(kwargs)
+            data=json.dumps(kwargs),
+            headers=headers
         )
         return response
 
