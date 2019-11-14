@@ -30,27 +30,27 @@ class TestCreateAPI(BaseTest):
     def test_create_endpoint_exists(self):
         response = self.send_create_request()
 
-        assert response.status_code != status.HTTP_404_NOT_FOUND
+        self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_authorizes_none_authentication(self):
         response = self.send_create_request()
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         json_response = self.load_response(response)
 
-        assert 'Please login.' in json_response['error']
+        self.assertIn('Please login.', json_response['error'])
 
     def test_create_authorizes_nonsense_authentication(self):
         response = self.send_create_request(
             token='IAmAUser'
         )
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         json_response = self.load_response(response)
 
-        assert 'Invalid token, please try again with a new token.' in json_response['error']
+        self.assertIn('Invalid token, please try again with a new token.', json_response['error'])
 
     def test_create_authorizes_not_admin_user(self):
         token = self.get_login_token('navid', '123qwe!@#')
@@ -59,11 +59,11 @@ class TestCreateAPI(BaseTest):
             token=token
         )
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         json_response = self.load_response(response)
 
-        assert 'Permission denied.' in json_response['error']
+        self.assertIn('Permission denied.', json_response['error'])
 
     def test_create_works(self):
         token = self.get_login_token('admin', '123qwe!@#')
@@ -79,8 +79,8 @@ class TestCreateAPI(BaseTest):
             }
         )
 
-        assert response.status_code == status.HTTP_201_CREATED
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         token = self.get_login_token('test', '123qwe!@#')
 
-        assert token is not None
+        self.assertIsNotNone(token)

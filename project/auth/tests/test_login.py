@@ -9,7 +9,7 @@ class TestLoginAPI(BaseTest):
             'post',
             '/auth/login'
         )
-        assert response.status_code != status.HTTP_404_NOT_FOUND
+        self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def send_login_request(self, username, password):
         response = self.send_request(
@@ -24,42 +24,42 @@ class TestLoginAPI(BaseTest):
     def test_login_validates_all_parameters(self):
         response = self.send_login_request(None, None)
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         json_response = self.load_response(response)
 
-        assert 'Field may not be null.' in json_response['username']
-        assert 'Field may not be null.' in json_response['password']
+        self.assertIn('Field may not be null.', json_response['username'])
+        self.assertIn('Field may not be null.', json_response['password'])
 
     def test_login_unregistered_user(self):
         response = self.send_login_request('test', 'test')
 
-        assert response.status_code == status.HTTP_404_NOT_FOUND
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         json_response = self.load_response(response)
 
-        assert 'error' in json_response
-        assert 'User does not exist.' in json_response['error']
+        self.assertIn('error', json_response)
+        self.assertIn('User does not exist.', json_response['error'])
 
     def test_login_wrong_password(self):
         response = self.send_login_request('navid', 'test')
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         json_response = self.load_response(response)
 
-        assert 'error' in json_response
-        assert 'Username or password is wrong.' in json_response['error']
+        self.assertIn('error', json_response)
+        self.assertIn('Username or password is wrong.', json_response['error'])
 
     def test_login_generates_token(self):
         response = self.send_login_request('navid', '123qwe!@#')
 
-        assert response.status_code == status.HTTP_200_OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         json_response = self.load_response(response)
 
-        assert 'token' in json_response
-        assert json_response['token'] is not None
+        self.assertIn('token', json_response)
+        self.assertIsNotNone(json_response['token'])
 
     def test_login_updates_last_login_date_field(self):
         user = None
@@ -76,4 +76,4 @@ class TestLoginAPI(BaseTest):
 
         new_last_login_date = user.last_login_date
 
-        assert last_login_date < new_last_login_date
+        self.assertLess(last_login_date, new_last_login_date)
