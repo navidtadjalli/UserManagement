@@ -20,6 +20,7 @@ class TestListAPI(BaseTest):
         response = self.send_list_request()
 
         self.assertNotEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertNotEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_list_works(self):
         token = self.get_login_token('admin', '123qwe!@#')

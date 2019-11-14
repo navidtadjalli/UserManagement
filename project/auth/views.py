@@ -70,13 +70,20 @@ def user_list():
     })
 
 
+@user_views.route('/<int:pk>', methods=['GET'])
+@is_admin
+def user_get(pk):
+    user = User.check_user_exists(pk)
+
+    return generate_response(status.HTTP_200_OK, {
+        'data': user_schema.dump(user)
+    })
+
+
 @user_views.route('/<int:pk>', methods=['PUT'])
 @is_admin
 def user_update(pk):
     user = User.check_user_exists(pk)
-
-    if not User.check_user_exists(pk):
-        raise exceptions.UserDoesNotExist
 
     data = user_schema.load(request.get_json())
 

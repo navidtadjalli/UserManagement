@@ -2,7 +2,7 @@ import datetime
 
 from project.umg.utilities.authentication import Authentication
 from project.umg.bases.base_model import db, ModelActionMixin
-from project.umg.utilities.exceptions import UsernameMustBeUnique
+from project.umg.utilities.exceptions import UsernameMustBeUnique, UserDoesNotExist
 from project.umg.utilities.hashers import PasswordHasher
 
 
@@ -59,9 +59,12 @@ class User(db.Model, ModelActionMixin):
 
     @staticmethod
     def check_user_exists(id):
-        user_existence = User.query.filter_by(id=id).first()
+        user = User.query.filter_by(id=id).first()
 
-        return user_existence
+        if not user:
+            raise UserDoesNotExist
+
+        return user
 
     def create_user(self):
         if self.check_username_exists():
