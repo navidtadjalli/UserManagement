@@ -66,3 +66,13 @@ class BaseTest(unittest.TestCase):
         json_response = json.loads(text_response)
 
         return json_response
+
+    def get_login_token(self, username, password):
+        response = self.send_request(
+            'post',
+            '/auth/login',
+            username=username,
+            password=password
+        )
+        token = self.load_response(response)['token']
+        return token

@@ -3,16 +3,6 @@ from project.umg.utilities import status
 
 
 class TestCreateAPI(BaseTest):
-    def get_login_token(self, username, password):
-        response = self.send_request(
-            'post',
-            '/auth/login',
-            username=username,
-            password=password
-        )
-        token = self.load_response(response)['token']
-        return token
-
     def send_create_request(self, parameters={}, token=None):
         if token:
             parameters['headers'] = {

@@ -9,6 +9,7 @@ from project.umg.utilities.response import generate_response
 auth_views = Blueprint('auth', __name__)
 user_views = Blueprint('users', __name__)
 user_schema = schemas.UserSchema()
+users_schema = schemas.UserSchema(many=True)
 user_login_schema = schemas.UserLoginSchema()
 
 
@@ -49,9 +50,21 @@ def login():
 
 @user_views.route('', methods=['POST'])
 @is_admin
-def create():
+def user_create():
     create_user_object(request.get_json())
 
     return generate_response(status.HTTP_201_CREATED, {
         'success': True
+    })
+
+
+@user_views.route('', methods=['GET'])
+@is_admin
+def user_list():
+    users = User.query.all()
+
+    data = users_schema.dump(users)
+
+    return generate_response(status.HTTP_200_OK, {
+        'data': data
     })

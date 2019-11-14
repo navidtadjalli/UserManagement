@@ -15,7 +15,7 @@ class UserSchema(Schema):
         )
     )
     registration_date = fields.DateTime(dump_only=True)
-    # blogs = fields.Nested(BlogSchema, many=True)
+    last_login_date = fields.DateTime(dump_only=True)
 
 
 class UserLoginSchema(Schema):
