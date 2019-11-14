@@ -68,3 +68,25 @@ def user_list():
     return generate_response(status.HTTP_200_OK, {
         'data': data
     })
+
+
+@user_views.route('/<int:pk>', methods=['PUT'])
+@is_admin
+def user_update(pk):
+    user = User.check_user_exists(pk)
+
+    if not User.check_user_exists(pk):
+        raise exceptions.UserDoesNotExist
+
+    data = user_schema.load(request.get_json())
+
+    password = data.pop('password')
+
+    user.update(data)
+
+    if password:
+        user.change_password(password)
+
+    return generate_response(status.HTTP_200_OK, {
+        'data': user_schema.dump(user)
+    })

@@ -21,7 +21,7 @@ class User(db.Model, ModelActionMixin):
 
     def __init__(self, data):
         self.username = data.get('username')
-        self.password = PasswordHasher.encode(data.get('password'))
+        self.password = self.hash_password(data.get('password'))
         self.first_name = data.get('first_name')
         self.last_name = data.get('last_name')
         self.phone_number = data.get('phone_number')
@@ -29,6 +29,15 @@ class User(db.Model, ModelActionMixin):
 
     def __repr__(self):
         return str(self.username)
+
+    @staticmethod
+    def hash_password(password):
+        return PasswordHasher.encode(password)
+
+    def change_password(self, new_password):
+        self.update({
+            'password': self.hash_password(new_password)
+        })
 
     def check_password(self, password):
         return PasswordHasher.verify(self.password, password)
@@ -47,6 +56,12 @@ class User(db.Model, ModelActionMixin):
         user_existence = User.query.filter_by(username=self.username).first()
 
         return user_existence is not None
+
+    @staticmethod
+    def check_user_exists(id):
+        user_existence = User.query.filter_by(id=id).first()
+
+        return user_existence
 
     def create_user(self):
         if self.check_username_exists():
