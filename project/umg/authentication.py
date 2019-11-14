@@ -2,17 +2,20 @@ import jwt
 import os
 import datetime
 
-from project.umg.response import generate_response
+from project.umg.exceptions import TokenExpired, InvalidToken, TokenGenerationException
 
 
-class Authentication():
+class Authentication(object):
     @staticmethod
-    def generate_token(user_id):
+    def generate_token(user_id, is_admin):
         try:
             payload = {
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
                 'iat': datetime.datetime.utcnow(),
-                'sub': user_id
+                'sub': {
+                    'user_id': user_id,
+                    'is_admin': is_admin
+                }
             }
             return jwt.encode(
                 payload,
@@ -20,18 +23,20 @@ class Authentication():
                 'HS256'
             ).decode("utf-8")
         except Exception as e:
-            return generate_response(400, {'error': 'error in generating user token'})
+            raise TokenGenerationException
 
     @staticmethod
     def decode_token(token):
-        re = {'data': {}, 'error': {}}
         try:
             payload = jwt.decode(token, os.getenv('JWT_SECRET_KEY'))
-            re['data'] = {'user_id': payload['sub']}
-            return re
+
+            data = {
+                'user_id': payload['sub']['user_id'],
+                'is_admin': payload['sub']['is_admin']
+            }
+
+            return data
         except jwt.ExpiredSignatureError as e1:
-            re['error'] = {'message': 'token expired, please login again'}
-            return re
+            raise TokenExpired
         except jwt.InvalidTokenError:
-            re['error'] = {'message': 'Invalid token, please try again with a new token'}
-            return re
+            raise InvalidToken

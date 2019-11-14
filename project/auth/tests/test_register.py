@@ -1,3 +1,4 @@
+from project.auth.models import User
 from project.umg.tests.base_test import BaseTest
 
 
@@ -62,3 +63,13 @@ class TestRegisterAPI(BaseTest):
         json_response = self.load_response(response)
 
         assert 'Phone number is invalid.' in json_response['phone_number']
+
+    def test_register_saves_user_as_normal_user(self):
+        response = self.send_register_request('test3', 'test3', 'test3', 'test3', '09353942996')
+
+        assert response.status_code == 200
+
+        with self.app.app_context():
+            user = User.query.filter_by(username='navid').first()
+
+        assert user.is_admin == False
