@@ -59,6 +59,6 @@ def login():
             'error': 'Username or password is wrong.'
         })
 
-    token = Authentication.generate_token(user.id)
+    token = user.login()
 
     return generate_response(status.HTTP_200_OK, {'token': token})

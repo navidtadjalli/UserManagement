@@ -1,3 +1,4 @@
+from project.auth.models import User
 from project.umg.tests.base_test import BaseTest
 
 
@@ -58,3 +59,20 @@ class TestLoginAPI(BaseTest):
 
         assert 'token' in json_response
         assert json_response['token'] is not None
+
+    def test_login_updates_last_login_date_field(self):
+        user = None
+
+        with self.app.app_context():
+            user = User.query.filter_by(username='navid').first()
+
+        last_login_date = user.last_login_date
+
+        self.send_login_request('navid', '123qwe!@#')
+
+        with self.app.app_context():
+            user = User.query.filter_by(username='navid').first()
+
+        new_last_login_date = user.last_login_date
+
+        assert last_login_date < new_last_login_date

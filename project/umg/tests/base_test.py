@@ -8,8 +8,16 @@ from project.umg.app import create_app
 
 class BaseTest(unittest.TestCase):
     def setUp(self):
-        app = create_app('development')
-        self.client = app.test_client()
+        self.app = create_app('development')
+        self.client = self.app.test_client()
+
+        admin = User({
+            'username': 'admin',
+            'password': '123qwe!@#',
+            'first_name': 'Admin',
+            'last_name': 'Adminian',
+            'phone_number': '09353942996'
+        })
 
         user = User({
             'username': 'navid',
@@ -19,7 +27,7 @@ class BaseTest(unittest.TestCase):
             'phone_number': '09353942996'
         })
 
-        with app.app_context():
+        with self.app.app_context():
             db.drop_all()
             db.create_all()
             user.save()

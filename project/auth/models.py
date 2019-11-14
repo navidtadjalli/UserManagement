@@ -1,5 +1,6 @@
 import datetime
 
+from project.umg.authentication import Authentication
 from project.umg.base_model import db, ModelActionMixin
 from project.umg.hashers import PasswordHasher
 
@@ -14,7 +15,8 @@ class User(db.Model, ModelActionMixin):
     last_name = db.Column(db.String(80))
     phone_number = db.Column(db.String(14))
     is_admin = db.Column(db.Boolean)
-    registration_date = db.Column(db.String(40), default=datetime.datetime.utcnow())
+    registration_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    last_login_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, data):
         self.username = data.get('username')
@@ -28,3 +30,13 @@ class User(db.Model, ModelActionMixin):
 
     def check_password(self, password):
         return PasswordHasher.verify(self.password, password)
+
+    def update_last_login_date(self):
+        self.update({
+            'last_login_date': datetime.datetime.utcnow()
+        })
+
+    def login(self):
+        self.update_last_login_date()
+
+        return Authentication.generate_token(self.id)
