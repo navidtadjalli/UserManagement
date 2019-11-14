@@ -1,4 +1,5 @@
-from project.umg.tests.base_test import BaseTest
+from project.umg.bases.base_test import BaseTest
+from project.umg.utilities import status
 
 
 class TestCreateAPI(BaseTest):
@@ -29,12 +30,12 @@ class TestCreateAPI(BaseTest):
     def test_create_endpoint_exists(self):
         response = self.send_create_request()
 
-        assert response.status_code != 404
+        assert response.status_code != status.HTTP_404_NOT_FOUND
 
     def test_create_authorizes_none_authentication(self):
         response = self.send_create_request()
 
-        assert response.status_code == 401
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
         json_response = self.load_response(response)
 
@@ -45,7 +46,7 @@ class TestCreateAPI(BaseTest):
             token='IAmAUser'
         )
 
-        assert response.status_code == 401
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
         json_response = self.load_response(response)
 
@@ -58,7 +59,7 @@ class TestCreateAPI(BaseTest):
             token=token
         )
 
-        assert response.status_code == 403
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
         json_response = self.load_response(response)
 
@@ -78,7 +79,7 @@ class TestCreateAPI(BaseTest):
             }
         )
 
-        assert response.status_code == 201
+        assert response.status_code == status.HTTP_201_CREATED
 
         token = self.get_login_token('test', '123qwe!@#')
 

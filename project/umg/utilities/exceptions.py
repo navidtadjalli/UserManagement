@@ -1,5 +1,5 @@
-from project.umg import status
-from project.umg.base_exception import APIException
+from project.umg.utilities import status
+from project.umg.bases.base_exception import APIException
 
 
 class UsernameMustBeUnique(APIException):

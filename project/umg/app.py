@@ -1,14 +1,14 @@
 from flask import Flask
 
-from project.umg import bcrypt, db, status
-from project.umg.base_exception import APIException
+from project.umg import bcrypt, db
+from project.umg.utilities import status
+from project.umg.bases.base_exception import APIException
 from marshmallow import ValidationError
 from project.umg.config import app_config
 
 from project.auth.views import auth_views, user_views
 
-from project.auth.models import User
-from project.umg.response import generate_response
+from project.umg.utilities.response import generate_response
 
 
 def create_app(env_name):

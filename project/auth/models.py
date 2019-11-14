@@ -1,9 +1,9 @@
 import datetime
 
-from project.umg.authentication import Authentication
-from project.umg.base_model import db, ModelActionMixin
-from project.umg.exceptions import UsernameMustBeUnique
-from project.umg.hashers import PasswordHasher
+from project.umg.utilities.authentication import Authentication
+from project.umg.bases.base_model import db, ModelActionMixin
+from project.umg.utilities.exceptions import UsernameMustBeUnique
+from project.umg.utilities.hashers import PasswordHasher
 
 
 class User(db.Model, ModelActionMixin):

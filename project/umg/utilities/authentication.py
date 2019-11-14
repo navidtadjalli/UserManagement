@@ -2,7 +2,7 @@ import jwt
 import os
 import datetime
 
-from project.umg.exceptions import TokenExpired, InvalidToken, TokenGenerationException
+from project.umg.utilities.exceptions import TokenExpired, InvalidToken, TokenGenerationException
 
 
 class Authentication(object):

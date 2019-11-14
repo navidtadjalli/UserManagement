@@ -2,10 +2,9 @@ from flask import Blueprint, request
 
 from project.auth.models import User
 from project.auth import schemas
-from project.umg import status
-from project.umg.authentication import Authentication
-from project.umg import exceptions
-from project.umg.response import generate_response
+from project.umg.utilities import exceptions, status
+from project.umg.utilities.decorators import is_admin
+from project.umg.utilities.response import generate_response
 
 auth_views = Blueprint('auth', __name__)
 user_views = Blueprint('users', __name__)
@@ -49,17 +48,8 @@ def login():
 
 
 @user_views.route('', methods=['POST'])
+@is_admin
 def create():
-    token = request.headers.get('token')
-
-    if not token:
-        raise exceptions.LoginRequired
-
-    data = Authentication.decode_token(token)
-
-    if not data['is_admin']:
-        raise exceptions.PermissionDenied
-
     create_user_object(request.get_json())
 
     return generate_response(status.HTTP_201_CREATED, {

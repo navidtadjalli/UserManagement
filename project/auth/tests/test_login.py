@@ -1,5 +1,6 @@
 from project.auth.models import User
-from project.umg.tests.base_test import BaseTest
+from project.umg.bases.base_test import BaseTest
+from project.umg.utilities import status
 
 
 class TestLoginAPI(BaseTest):
@@ -8,7 +9,7 @@ class TestLoginAPI(BaseTest):
             'post',
             '/auth/login'
         )
-        assert response.status_code != 404
+        assert response.status_code != status.HTTP_404_NOT_FOUND
 
     def send_login_request(self, username, password):
         response = self.send_request(
@@ -23,7 +24,7 @@ class TestLoginAPI(BaseTest):
     def test_login_validates_all_parameters(self):
         response = self.send_login_request(None, None)
 
-        assert response.status_code == 400
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
         json_response = self.load_response(response)
 
@@ -33,7 +34,7 @@ class TestLoginAPI(BaseTest):
     def test_login_unregistered_user(self):
         response = self.send_login_request('test', 'test')
 
-        assert response.status_code == 404
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
         json_response = self.load_response(response)
 
@@ -43,7 +44,7 @@ class TestLoginAPI(BaseTest):
     def test_login_wrong_password(self):
         response = self.send_login_request('navid', 'test')
 
-        assert response.status_code == 401
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
         json_response = self.load_response(response)
 
@@ -53,7 +54,7 @@ class TestLoginAPI(BaseTest):
     def test_login_generates_token(self):
         response = self.send_login_request('navid', '123qwe!@#')
 
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
 
         json_response = self.load_response(response)
 
