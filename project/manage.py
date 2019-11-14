@@ -15,6 +15,28 @@ migrate = Migrate(app=app, db=db)
 
 manager = Manager(app=app)
 
+
+@manager.command
+def createsuperuser():
+    from project.auth.models import User
+
+    admin = User({
+        'username': 'admin',
+        'password': '123qwe!@#',
+        'first_name': 'Admin',
+        'last_name': 'Adminian',
+        'phone_number': '09353942996',
+        'is_admin': True
+    })
+
+    with app.app_context():
+        if not admin.check_username_exists():
+            admin.save()
+            print('>> Admin created successfully')
+        else:
+            print('>> Admin created before')
+
+
 manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':

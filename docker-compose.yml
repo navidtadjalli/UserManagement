@@ -22,15 +22,19 @@ services:
   project:
     build: ./project
     image: project
-    command: 'bash -c "sleep 360m"'
+    command: bash -c "
+      python manage.py db upgrade &&
+      python manage.py db migrate &&
+      python manage.py createsuperuser &&
+      gunicorn --access-logfile - --workers 5 --bind 0.0.0.0:8000 umg.wsgi:application"
     ports:
-      - "5000:8000"
+      - "8000:8000"
     volumes:
       - ./project:/project
     depends_on:
       - db
     environment:
-      FLASK_ENV: 'development'
+      FLASK_ENV: 'production'
       DATABASE_URL: 'postgres://root:Um8TdymYzeutdtRT@db:5432/umg'
       JWT_SECRET_KEY: 'Q\xf0nM~\xba\xa1\xc8\xd04\x1b\xd6\x1e\xa0,\x91'
     networks:
